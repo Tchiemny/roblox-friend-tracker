@@ -6,6 +6,8 @@ class RobloxFriendTracker {
         this.userData = null;
         this.friends = [];
         this.refreshInterval = null;
+        this.websocket = null;
+        this.backendConnected = false;
         
         this.init();
     }
@@ -22,6 +24,11 @@ class RobloxFriendTracker {
         }
 
         this.setupEventListeners();
+        
+        // Initialize backend connection if enabled
+        if (CONFIG.ENABLE_BACKEND_TRACKING) {
+            this.initBackendConnection();
+        }
     }
 
     setupEventListeners() {
@@ -440,6 +447,184 @@ class RobloxFriendTracker {
     showAppSection() {
         document.getElementById('auth-section')?.classList.add('hidden');
         document.getElementById('app-section')?.classList.remove('hidden');
+    }
+
+    // Backend Connection Methods
+    async initBackendConnection() {
+        try {
+            // Test backend health
+            const response = await fetch(`${CONFIG.BACKEND_URL}/health`);
+            if (response.ok) {
+                this.backendConnected = true;
+                console.log('✅ Backend connection established');
+                this.connectWebSocket();
+            }
+        } catch (error) {
+            console.warn('⚠️ Backend not available:', error.message);
+            this.backendConnected = false;
+        }
+    }
+
+    connectWebSocket() {
+        if (!CONFIG.ENABLE_BACKEND_TRACKING || !this.backendConnected) return;
+
+        try {
+            const wsUrl = CONFIG.BACKEND_URL.replace(/^http/, 'ws');
+            this.websocket = new WebSocket(wsUrl);
+
+            this.websocket.onopen = () => {
+                console.log('✅ WebSocket connected');
+                // Request current tracked list
+                this.websocket.send(JSON.stringify({ type: 'get-tracked' }));
+            };
+
+            this.websocket.onmessage = (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    this.handleWebSocketMessage(data);
+                } catch (error) {
+                    console.error('WebSocket message parse error:', error);
+                }
+            };
+
+            this.websocket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+
+            this.websocket.onclose = () => {
+                console.log('WebSocket disconnected');
+                // Attempt reconnect after 5 seconds
+                setTimeout(() => this.connectWebSocket(), 5000);
+            };
+        } catch (error) {
+            console.error('WebSocket connection error:', error);
+        }
+    }
+
+    handleWebSocketMessage(data) {
+        if (!data || !data.type) return;
+
+        switch (data.type) {
+            case 'tracked-list':
+                console.log('Tracked users:', data.tracked);
+                this.displayTrackedUsers(data.tracked);
+                break;
+            case 'friend-change':
+                console.log('Friend change detected:', data);
+                this.handleFriendChangeNotification(data);
+                break;
+            default:
+                console.log('Unknown message type:', data.type);
+        }
+    }
+
+    displayTrackedUsers(tracked) {
+        // Display tracked users information in console or UI
+        if (Array.isArray(tracked) && tracked.length > 0) {
+            console.log(`Currently tracking ${tracked.length} user(s)`);
+        }
+    }
+
+    handleFriendChangeNotification(data) {
+        // Show notification for friend changes
+        const { username, added, removed } = data;
+        let message = '';
+        
+        if (added && added.length > 0) {
+            message += `${added.length} friend(s) added`;
+        }
+        if (removed && removed.length > 0) {
+            if (message) message += ', ';
+            message += `${removed.length} friend(s) removed`;
+        }
+
+        if (message) {
+            console.log(`Friend change for ${username || 'user'}: ${message}`);
+            // You could show a toast notification here
+        }
+    }
+
+    async trackUserOnBackend(userId, username) {
+        if (!this.backendConnected) {
+            console.warn('Backend not connected');
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${CONFIG.BACKEND_URL}/track`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, username })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Now tracking user on backend:', data);
+                return true;
+            }
+        } catch (error) {
+            console.error('Error tracking user on backend:', error);
+        }
+        return false;
+    }
+
+    async untrackUserOnBackend(userId) {
+        if (!this.backendConnected) {
+            console.warn('Backend not connected');
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${CONFIG.BACKEND_URL}/track/${userId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                console.log('Stopped tracking user on backend');
+                return true;
+            }
+        } catch (error) {
+            console.error('Error untracking user on backend:', error);
+        }
+        return false;
+    }
+
+    async getTrackedUsers() {
+        if (!this.backendConnected) {
+            console.warn('Backend not connected');
+            return [];
+        }
+
+        try {
+            const response = await fetch(`${CONFIG.BACKEND_URL}/tracked`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.tracked || [];
+            }
+        } catch (error) {
+            console.error('Error fetching tracked users:', error);
+        }
+        return [];
+    }
+
+    async getFriendEvents(userId) {
+        if (!this.backendConnected) {
+            console.warn('Backend not connected');
+            return [];
+        }
+
+        try {
+            const response = await fetch(`${CONFIG.BACKEND_URL}/events/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                return data.events || [];
+            }
+        } catch (error) {
+            console.error('Error fetching friend events:', error);
+        }
+        return [];
     }
 }
 

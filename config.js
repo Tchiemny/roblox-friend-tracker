@@ -25,7 +25,13 @@ const CONFIG = {
     FRIENDS_API: 'https://friends.roblox.com',
     PRESENCE_API: 'https://presence.roblox.com',
     THUMBNAILS_API: 'https://thumbnails.roblox.com',
-    GAMES_API: 'https://games.roblox.com'
+    GAMES_API: 'https://games.roblox.com',
+    
+    // Backend server configuration
+    // Replace this with your backend server IP/URL (e.g., 'http://192.168.1.100:3001' or 'http://localhost:3001')
+    BACKEND_URL: 'http://localhost:3001',
+    // Set to true to enable WebSocket connection for real-time friend tracking
+    ENABLE_BACKEND_TRACKING: false
 };
 
 console.log("Redirect URL: "+ CONFIG.REDIRECT_URI)
