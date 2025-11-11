@@ -28,6 +28,8 @@ const CONFIG = {
     GAMES_API: 'https://games.roblox.com'
 };
 
+console.log("Redirect URL: "+ CONFIG.REDIRECT_URI)
+
 // Check if configuration is set up
 if (CONFIG.CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
     console.warn('⚠️ OAuth Client ID not configured. Please update config.js with your Roblox OAuth2.0 credentials.');
