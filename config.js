@@ -7,18 +7,18 @@
 const CONFIG = {
     // Replace this with your actual Roblox OAuth2.0 client ID
     CLIENT_ID: '5978660604237428347',
-    
+
     // OAuth2.0 endpoints
     AUTHORIZE_URL: 'https://apis.roblox.com/oauth/v1/authorize',
     TOKEN_URL: 'https://apis.roblox.com/oauth/v1/token',
-    
+
     // Required scopes for friend tracking
     SCOPES: ['openid', 'profile'],
-    
+
     // Redirect URI - Update this to match your GitHub Pages URL
     // For GitHub Pages: https://USERNAME.github.io/REPO_NAME/callback.html
     REDIRECT_URI: window.location.href + 'callback.html',
-    
+
     // API endpoints
     API_BASE_URL: 'https://apis.roblox.com',
     USERS_API: 'https://users.roblox.com',
@@ -26,15 +26,15 @@ const CONFIG = {
     PRESENCE_API: 'https://presence.roblox.com',
     THUMBNAILS_API: 'https://thumbnails.roblox.com',
     GAMES_API: 'https://games.roblox.com',
-    
+
     // Backend server configuration
     // Replace this with your backend server IP/URL (e.g., 'http://192.168.1.100:3001' or 'http://localhost:3001')
-    BACKEND_URL: 'http://localhost:3001',
+    BACKEND_URL: 'http://205.137.245.182:3001',
     // Set to true to enable WebSocket connection for real-time friend tracking
     ENABLE_BACKEND_TRACKING: false
 };
 
-console.log("Redirect URL: "+ CONFIG.REDIRECT_URI)
+console.log("Redirect URL: " + CONFIG.REDIRECT_URI)
 
 // Check if configuration is set up
 if (CONFIG.CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
