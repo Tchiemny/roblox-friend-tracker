@@ -40,6 +40,6 @@ const CONFIG = {
 console.log("Redirect URL: " + CONFIG.REDIRECT_URI)
 
 // Check if configuration is set up
-if (CONFIG.CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
+if (CONFIG.CLIENT_ID === '9072113906187878278') {
     console.warn('⚠️ OAuth Client ID not configured. Please update config.js with your Roblox OAuth2.0 credentials.');
 }
