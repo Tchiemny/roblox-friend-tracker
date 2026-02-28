@@ -17,7 +17,7 @@ const CONFIG = {
 
     // Redirect URI - Update this to match your GitHub Pages URL
     // For GitHub Pages: https://USERNAME.github.io/REPO_NAME/callback.html
-    REDIRECT_URI: window.location.href + 'callback.html',
+    DIRECT_URI: 'https://tchiemny.github.io/roblox-friend-tracker/callback.html',
 
     // API endpoints
     API_BASE_URL: 'https://apis.roblox.com',
@@ -40,6 +40,6 @@ const CONFIG = {
 console.log("Redirect URL: " + CONFIG.REDIRECT_URI)
 
 // Check if configuration is set up
-if (CONFIG.CLIENT_ID === '9072113906187878278') {
+if (CONFIG.CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
     console.warn('⚠️ OAuth Client ID not configured. Please update config.js with your Roblox OAuth2.0 credentials.');
 }
