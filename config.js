@@ -6,7 +6,7 @@
 
 const CONFIG = {
     // Replace this with your actual Roblox OAuth2.0 client ID
-    CLIENT_ID: '5978660604237428347',
+    CLIENT_ID: '9072113906187878278',
 
     // OAuth2.0 endpoints
     AUTHORIZE_URL: 'https://apis.roblox.com/oauth/v1/authorize',
